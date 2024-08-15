@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, FlatList, StyleSheet } from 'react-native';
 import BoardItem from './BoardTemplate';
+import { useNavigation } from '@react-navigation/native';
 
 interface BoardListProps {
   items: {
@@ -15,11 +16,14 @@ interface BoardListProps {
 }
 
 const BoardList: React.FC<BoardListProps> = ({ items }) => {
+    const navigation = useNavigation();
+
   return (
     <FlatList
       data={items}
       renderItem={({ item }) => (
         <BoardItem
+          onPress={() => navigation.navigate('MatchingBoardDetail', { id : item.id })}
           title={item.title}
           content={item.content}
           author={item.writer}

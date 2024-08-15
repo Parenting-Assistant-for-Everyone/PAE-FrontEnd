@@ -8,7 +8,9 @@ import MatchingBoard from './component/MatchingBoard';
 import Board from './component/Board';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { WebView } from 'react-native-webview';
-
+import MatchingBoardDetail from './component/Board/MatchingBoardDetail';
+import CreateMatchingBoard from './component/Board/CreateMatchingBoard';
+import LocationAssistant from './component/Board/LocationAssistant';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -17,6 +19,10 @@ function BoardStack() {
     <Stack.Navigator>
       <Stack.Screen name="Board" component={Board} options={{ headerShown: false }} />
       <Stack.Screen name="MatchingBoard" component={MatchingBoard} options={{ headerShown: false }} />
+      <Stack.Screen name="MatchingBoardDetail" component={MatchingBoardDetail} options={{ headerShown: false }}/>
+      <Stack.Screen name="CreateMatchingBoard" component={CreateMatchingBoard} options={{ headerShown: false }}/>
+      <Stack.Screen name="LocationAssistant" component={LocationAssistant} options={{ headerShown: false }}/>
+
     </Stack.Navigator>
   );
 }
