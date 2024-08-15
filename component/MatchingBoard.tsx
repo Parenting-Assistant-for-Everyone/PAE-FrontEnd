@@ -19,14 +19,14 @@ function MatchingBoard() {
 
   const fetchData = async (keyword = '') => {
     try {
-      let url = `http://172.30.1.5:8080/board/matchingBoardList?page=1`;
+      let url = `http://192.168.0.7:8080/board/matchingBoardList?page=1`;
 
       if (selected === '구인') {
-        url = `http://172.30.1.5:8080/board/matchingBoardList/jobOpening?page=1`;
+        url = `http://192.168.0.7:8080/board/matchingBoardList/jobOpening?page=1`;
         } else if (selected === '구직') {
-        url = `http://172.30.1.5:8080/board/matchingBoardList/jobSearch?page=1`;
+        url = `http://192.168.0.7:8080/board/matchingBoardList/jobSearch?page=1`;
       } else if (keyword) {
-        url = `http://172.30.1.5:8080/board/search?keyword=${keyword}&page=1`;
+        url = `http://192.168.0.7:8080/board/search?keyword=${keyword}&page=1`;
       }
 
       const response = await axios.get(url, {

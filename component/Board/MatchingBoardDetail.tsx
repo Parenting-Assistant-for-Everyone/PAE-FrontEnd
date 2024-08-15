@@ -57,7 +57,7 @@ const MatchingBoardDetail: React.FC<MatchingBoardDetailProps> = () => {
   useEffect(() => {
     const fetchBoardDetail = async () => {
       try {
-        const response = await fetch(`http://172.30.1.5:8080/board/view/${id}`);
+        const response = await fetch(`http://192.168.0.7:8080/board/view/${id}`);
         const result = await response.json();
         if (result.httpStatusCode === 200) {
           setData(result.data);
@@ -80,7 +80,7 @@ const MatchingBoardDetail: React.FC<MatchingBoardDetailProps> = () => {
       const memberId = await AsyncStorage.getItem('memberId');
       console.log("아이디는 이거다 : ",memberId);
       if (memberId) {
-        const response = await fetch(`http://172.30.1.5:8080/like/checkLike?id=${id}&memberId=${memberId}`);
+        const response = await fetch(`http://192.168.0.7:8080/like/checkLike?id=${id}&memberId=${memberId}`);
         const result = await response.json();
         if (result.httpStatusCode === 200) {
           setLiked(result.data);
@@ -111,7 +111,7 @@ const MatchingBoardDetail: React.FC<MatchingBoardDetailProps> = () => {
       };
 
       try {
-        const response = await fetch('http://172.30.1.5:8080/comment/create', {
+        const response = await fetch('http://192.168.0.7:8080/comment/create', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -147,7 +147,7 @@ const MatchingBoardDetail: React.FC<MatchingBoardDetailProps> = () => {
     };
     if(!liked){
     try {
-      const response = await fetch('http://172.30.1.5:8080/like/createLike', {
+      const response = await fetch('http://192.168.0.7:8080/like/createLike', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -166,7 +166,7 @@ const MatchingBoardDetail: React.FC<MatchingBoardDetailProps> = () => {
     }}
     else{
       try {
-        const response = await fetch(`http://172.30.1.5:8080/like/delete/${memberId}/${id}`, {
+        const response = await fetch(`http://192.168.0.7:8080/like/delete/${memberId}/${id}`, {
           method: 'DELETE',
         });
         if (response.ok) {
