@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { SafeAreaView, View, Text, FlatList, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
 const chatData = {
     거래: [
@@ -18,6 +19,11 @@ const chatData = {
 
 export default function ChatListScreen() {
     const [selectedTab, setSelectedTab] = useState('거래');
+    const navigation = useNavigation();
+
+    const handleChatPress = (chat) => {
+        navigation.navigate('ChatDetailScreen', { chat });
+    };
 
     return (
         <SafeAreaView style={styles.container}>
@@ -66,14 +72,16 @@ export default function ChatListScreen() {
                 data={chatData[selectedTab]}
                 keyExtractor={(item) => item.id}
                 renderItem={({ item }) => (
-                    <View style={styles.chatItemContainer}>
-                        <Image source={{ uri: item.avatar }} style={styles.avatar} />
-                        <View style={styles.chatDetails}>
-                            <Text style={styles.chatName}>{item.name}</Text>
-                            <Text style={styles.chatMessage}>{item.message}</Text>
+                    <TouchableOpacity onPress={() => handleChatPress(item)}>
+                        <View style={styles.chatItemContainer}>
+                            <Image source={{ uri: item.avatar }} style={styles.avatar} />
+                            <View style={styles.chatDetails}>
+                                <Text style={styles.chatName}>{item.name}</Text>
+                                <Text style={styles.chatMessage}>{item.message}</Text>
+                            </View>
+                            <Text style={styles.chatTime}>{item.time}</Text>
                         </View>
-                        <Text style={styles.chatTime}>{item.time}</Text>
-                    </View>
+                    </TouchableOpacity>
                 )}
             />
         </SafeAreaView>

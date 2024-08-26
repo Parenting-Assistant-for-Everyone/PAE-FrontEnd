@@ -1,13 +1,51 @@
-import React, { useState } from 'react';
-import { SafeAreaView, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { SafeAreaView, View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function ItemDetailScreen({ route, navigation }) {
     const { item } = route.params;
+    const [itemData, setItemData] = useState(item); // 초기 데이터는 route로 전달된 데이터를 사용
     const [isFavorite, setIsFavorite] = useState(false);
 
-    const toggleFavorite = () => {
-        setIsFavorite(!isFavorite);
+    useEffect(() => {
+        const fetchItemData = async () => {
+            try {
+                const response = await fetch(`http://localhost:8080/api/v1/goods/${item.boardId}`);
+                const result = await response.json();
+
+                if (result.httpStatusCode === 200 && result.code === '1000') {
+                    const fetchedItem = result.data.content[0];
+                    setItemData(fetchedItem);
+                } else {
+                    console.error('Failed to fetch item data:', result.message);
+                }
+            } catch (error) {
+                console.error('Failed to fetch item data:', error);
+            }
+        };
+
+        fetchItemData();
+    }, [item.boardId]);
+
+    const toggleFavorite = async () => {
+        const updatedFavorite = !isFavorite;
+        setIsFavorite(updatedFavorite);
+
+        try {
+            const response = await fetch(`http://localhost:8080/api/v1/goods/${item.boardId}/favorite`, {
+                method: updatedFavorite ? 'POST' : 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to update favorite status');
+            }
+        } catch (error) {
+            console.error('Error updating favorite status:', error);
+            setIsFavorite(!updatedFavorite); // 실패 시 상태를 원래대로 되돌림
+        }
     };
 
     return (
@@ -16,25 +54,28 @@ export default function ItemDetailScreen({ route, navigation }) {
                 <TouchableOpacity onPress={() => navigation.goBack()}>
                     <Ionicons name="arrow-back" size={24} color="black" />
                 </TouchableOpacity>
-                <Text style={styles.category}>{item.category}</Text>
-                <TouchableOpacity onPress={() => navigation.navigate('ItemEditScreen', { item })}>
+                <Text style={styles.category}>{itemData.saleStatus}</Text>
+                <TouchableOpacity onPress={() => navigation.navigate('ItemEditScreen', { item: itemData })}>
                     <Ionicons name="ellipsis-vertical" size={24} color="black" />
                 </TouchableOpacity>
             </View>
             <View style={styles.imageContainer}>
-                <View style={styles.itemImagePlaceholder} />
+                {itemData.thumbnailUrl ? (
+                    <Image source={{ uri: itemData.thumbnailUrl }} style={styles.itemImage} />
+                ) : (
+                    <View style={styles.itemImagePlaceholder} />
+                )}
             </View>
             <View style={styles.detailsContainer}>
                 <View style={styles.userInfo}>
-                    <View style={styles.userImagePlaceholder} />
                     <View>
-                        <Text style={styles.userName}>승아맘</Text>
-                        <Text style={styles.userLocation}>부산 대연1동</Text>
+                        <Text style={styles.userName}>{itemData.writer || '작성자 없음'}</Text>
+                        <Text style={styles.userLocation}>{itemData.address || '위치 정보 없음'}</Text>
                     </View>
-                    <Text style={styles.date}>2024.06.11</Text>
+                    <Text style={styles.date}>{itemData.daysAgo || '날짜 정보 없음'}</Text>
                 </View>
-                <Text style={styles.itemTitle}>{item.name}</Text>
-                <Text style={styles.itemDescription}>6개월 이하 아기들이 사용하기 좋은 쿠션입니다. 너무 귀여워요.</Text>
+                <Text style={styles.itemTitle}>{itemData.title}</Text>
+                <Text style={styles.itemDescription}>{itemData.description || '내용이 없습니다.'}</Text>
             </View>
             <View style={styles.footer}>
                 <View style={styles.footerLeft}>
@@ -45,7 +86,7 @@ export default function ItemDetailScreen({ route, navigation }) {
                             color={isFavorite ? "red" : "black"}
                         />
                     </TouchableOpacity>
-                    <Text style={styles.price}>50,000원</Text>
+                    <Text style={styles.price}>{itemData.price || '가격 정보 없음'}</Text>
                 </View>
                 <TouchableOpacity style={styles.contactButton}>
                     <Text style={styles.contactButtonText}>채팅하기</Text>
@@ -76,6 +117,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginVertical: 16,
     },
+    itemImage: {
+        width: 200,
+        height: 200,
+        borderRadius: 10,
+        backgroundColor: '#D3D3D3',
+    },
     itemImagePlaceholder: {
         width: 200,
         height: 200,
@@ -90,13 +137,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         marginBottom: 16,
-    },
-    userImagePlaceholder: {
-        width: 50,
-        height: 50,
-        borderRadius: 25,
-        backgroundColor: '#D3D3D3',
-        marginRight: 10,
     },
     userName: {
         fontSize: 16,

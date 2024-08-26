@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { SafeAreaView, View, Text, FlatList, TouchableOpacity, StyleSheet, Modal } from 'react-native';
+import { SafeAreaView, View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../../App';
-
 
 type InfoBoardScreenNavigationProp = StackNavigationProp<RootStackParamList, 'InfoBoardScreen'>;
 
@@ -11,13 +10,25 @@ type Props = {
     navigation: InfoBoardScreenNavigationProp;
 };
 
-const data = [
-    { id: '1', title: '정보 1', content: '유익한 정보~~', author: '닉네임', date: '24.06.13', likes: 10, comments: 2 },
-    { id: '2', title: '정보 2', content: '유익한 정보~~', author: '닉네임', date: '24.06.13', likes: 12, comments: 4 },
-];
+const initialData = {
+    education: [
+        { title: '수면 교육 방법', content: '1. 일관된 수면 루틴 확립', screen: 'EducationPost1' },
+        { title: '발달 단계 놀이방법', content: '신생아기(0~3개월) 놀이방법: 얼굴 보고 웃기', screen: 'EducationPost2' },
+    ],
+    health: [
+        { title: '건강 1', content: '건강에 관한 정보~~', screen: 'HealthPost1' },
+        { title: '건강 2', content: '건강에 관한 정보~~', screen: 'HealthPost2' },
+    ],
+    life: [
+        { title: '생활 1', content: '생활에 관한 정보~~', screen: 'LifePost1' },
+        { title: '생활 2', content: '생활에 관한 정보~~', screen: 'LifePost2' },
+    ],
+};
 
 export default function InfoBoardScreen({ navigation }: Props) {
-    const [modalVisible, setModalVisible] = useState(false);
+    const [selectedCategory, setSelectedCategory] = useState('education');
+    const [data] = useState(initialData);
+
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
@@ -28,60 +39,41 @@ export default function InfoBoardScreen({ navigation }: Props) {
                 </View>
             </View>
             <View style={styles.buttonContainer}>
-                <TouchableOpacity style={[styles.categoryButton, styles.selectedCategory]}>
-                    <Text style={styles.categoryButtonText}>인기순</Text>
+                <TouchableOpacity
+                    style={[styles.categoryButton, selectedCategory === 'education' && styles.selectedCategory]}
+                    onPress={() => setSelectedCategory('education')}
+                >
+                    <Text style={styles.categoryButtonText}>교육</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.categoryButton}>
-                    <Text style={styles.categoryButtonText}>최신순</Text>
+                <TouchableOpacity
+                    style={[styles.categoryButton, selectedCategory === 'health' && styles.selectedCategory]}
+                    onPress={() => setSelectedCategory('health')}
+                >
+                    <Text style={styles.categoryButtonText}>건강</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.categoryButton}>
-                    <Text style={styles.categoryButtonText}>추천</Text>
+                <TouchableOpacity
+                    style={[styles.categoryButton, selectedCategory === 'life' && styles.selectedCategory]}
+                    onPress={() => setSelectedCategory('life')}
+                >
+                    <Text style={styles.categoryButtonText}>생활</Text>
                 </TouchableOpacity>
             </View>
             <FlatList
-                data={data}
-                keyExtractor={(item) => item.id}
+                data={data[selectedCategory]}
+                keyExtractor={(item, index) => index.toString()}
                 renderItem={({ item }) => (
                     <TouchableOpacity
-                        onPress={() => navigation.navigate('InfoPostDetailScreen', { post: item })}
+                        onPress={() => navigation.navigate(item.screen)}
                     >
                         <View style={styles.itemContainer}>
                             <View style={styles.itemContent}>
                                 <Text style={styles.itemTitle}>{item.title}</Text>
-                                <Text style={styles.itemDetails}>{item.author} | {item.date}</Text>
                                 <Text style={styles.itemText}>{item.content}</Text>
-                                <View style={styles.itemFooter}>
-                                    <Ionicons name="heart-outline" size={16} color="gray" />
-                                    <Text style={styles.itemFooterText}>{item.likes}</Text>
-                                    <Ionicons name="chatbubble-outline" size={16} color="gray" />
-                                    <Text style={styles.itemFooterText}>{item.comments}</Text>
-                                </View>
                             </View>
-                            <View style={styles.itemImagePlaceholder} />
                         </View>
                     </TouchableOpacity>
                 )}
             />
-            <TouchableOpacity style={styles.floatingButton} onPress={() => setModalVisible(true)}>
-                <Ionicons name="add" size={24} color="white" />
-            </TouchableOpacity>
-            <Modal
-                visible={modalVisible}
-                transparent={true}
-                animationType="fade"
-                onRequestClose={() => setModalVisible(false)}
-            >
-                <TouchableOpacity style={styles.modalOverlay} onPress={() => setModalVisible(false)}>
-                    <View style={styles.modalContainer}>
-                        <TouchableOpacity style={styles.modalButton} onPress={() => {
-                            setModalVisible(false);
-                            navigation.navigate('InfoRegister');
-                        }}>
-                            <Text style={styles.modalButtonText}>게시글 등록</Text>
-                        </TouchableOpacity>
-                    </View>
-                </TouchableOpacity>
-            </Modal>
         </SafeAreaView>
     );
 }
@@ -96,52 +88,8 @@ const styles = StyleSheet.create({
     categoryButton: { paddingVertical: 6, paddingHorizontal: 12, borderRadius: 20, backgroundColor: '#F8F8F8', marginRight: 10 },
     selectedCategory: { backgroundColor: '#FFEB3B' },
     categoryButtonText: { fontSize: 14, color: '#000' },
-    itemContainer: { flexDirection: 'row', padding: 16, borderBottomWidth: 1, borderBottomColor: '#EEE', backgroundColor: '#FFFFFF' },
+    itemContainer: { padding: 16, borderBottomWidth: 1, borderBottomColor: '#EEE', backgroundColor: '#FFFFFF' },
     itemContent: { flex: 1 },
     itemTitle: { fontSize: 16, fontWeight: 'bold' },
-    itemDetails: { fontSize: 12, color: '#888' },
     itemText: { marginVertical: 8, fontSize: 14, color: '#555' },
-    itemFooter: { flexDirection: 'row', alignItems: 'center' },
-    itemFooterText: { marginHorizontal: 4, fontSize: 12, color: '#888' },
-    itemImagePlaceholder: { width: 60, height: 60, marginLeft: 16, borderRadius: 10, backgroundColor: '#D3D3D3' },
-    floatingButton: {
-        position: 'absolute',
-        bottom: 20,
-        right: 20,
-        backgroundColor: '#FFEB3B',
-        width: 50,
-        height: 50,
-        borderRadius: 25,
-        justifyContent: 'center',
-        alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.8,
-        shadowRadius: 2,
-        elevation: 5,
-    },
-    modalOverlay: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    },
-    modalContainer: {
-        width: 200,
-        backgroundColor: '#FFF',
-        padding: 20,
-        borderRadius: 10,
-    },
-    modalButton: {
-        marginTop: 10,
-        padding: 10,
-        backgroundColor: '#FFEB3B',
-        borderRadius: 5,
-        alignItems: 'center',
-    },
-    modalButtonText: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        color: '#000',
-    },
 });

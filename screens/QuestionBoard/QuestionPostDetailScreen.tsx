@@ -1,43 +1,91 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SafeAreaView, View, Text, FlatList, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+
+interface Comment {
+    id: string;
+    author: string;
+    content: string;
+    likes: number;
+    created_at: string;
+}
 
 export default function QuestionPostDetailScreen({ route, navigation }) {
     const { post } = route.params;
 
-    const [comments, setComments] = useState([
-        { id: '1', author: '닉네임2', content: '저도 궁금해요!', likes: 2 },
-    ]);
-
+    const [comments, setComments] = useState<Comment[]>([]);
     const [newComment, setNewComment] = useState('');
 
-    const handleAddComment = () => {
+    useEffect(() => {
+        const fetchComments = async () => {
+            try {
+                const response = await fetch(`https://your-api.com/posts/${post.id}/comments`);
+                const result = await response.json();
+                setComments(result);
+            } catch (error) {
+                console.error('Failed to fetch comments:', error);
+            }
+        };
+
+        fetchComments();
+    }, [post.id]);
+
+    const handleAddComment = async () => {
         if (newComment.trim()) {
-            const newCommentData = {
-                id: (comments.length + 1).toString(),
-                author: '닉네임',
+            const newCommentData: Comment = {
+                id: '', // 서버에서 생성된 ID를 받을 것이므로 초기에는 빈 값
+                author: '닉네임', // 실제로는 로그인한 사용자의 이름을 사용
                 content: newComment,
                 likes: 0,
+                created_at: new Date().toISOString(),
             };
-            setComments([...comments, newCommentData]);
-            setNewComment('');
 
-            // DB에 댓글 저장 (예시 로그)
-            console.log('New comment added:', newCommentData);
+            try {
+                const response = await fetch(`https://your-api.com/posts/${post.id}/comments`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(newCommentData),
+                });
+
+                if (response.ok) {
+                    const savedComment = await response.json(); // 서버에서 저장된 댓글을 반환받음
+                    setComments([...comments, savedComment]);
+                    setNewComment('');
+                } else {
+                    console.error('Failed to post comment');
+                }
+            } catch (error) {
+                console.error('Error posting comment:', error);
+            }
         }
     };
 
-    const handleReport = () => {
+    const handleReport = async () => {
         Alert.alert(
             "신고하기",
             "이 게시글을 신고하시겠습니까?",
             [
                 { text: "취소", style: "cancel" },
                 {
-                    text: "신고", onPress: () => {
-                        console.log("Reported post:", post.id);
-                        // DB에 신고 저장 (예시 로그)
-                        alert("신고가 접수되었습니다.");
+                    text: "신고", onPress: async () => {
+                        try {
+                            const response = await fetch(`https://your-api.com/posts/${post.id}/report`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                            });
+
+                            if (response.ok) {
+                                alert("신고가 접수되었습니다.");
+                            } else {
+                                console.error('Failed to report post');
+                            }
+                        } catch (error) {
+                            console.error('Error reporting post:', error);
+                        }
                     }
                 }
             ]
@@ -61,14 +109,14 @@ export default function QuestionPostDetailScreen({ route, navigation }) {
                     <Text style={styles.postTitle}>{post.title}</Text>
                     <View style={styles.userImagePlaceholder} />
                 </View>
-                <Text style={styles.postDetails}>{post.author}  {post.date}  {post.time}</Text>
+                <Text style={styles.postDetails}>{post.writer} | {post.date}</Text>
                 <Text style={styles.postContent}>{post.content}</Text>
                 <View style={styles.postStatsContainer}>
                     <View style={styles.statBox}>
-                        <Text style={styles.statText}>조회수 {post.views}</Text>
+                        <Text style={styles.statText}>조회수 {post.view_count}</Text>
                     </View>
                     <View style={styles.statBox}>
-                        <Text style={styles.statText}>스크랩 {post.scraps}</Text>
+                        <Text style={styles.statText}>스크랩 {post.save}</Text>
                     </View>
                     <View style={styles.statBox}>
                         <Text style={styles.statText}>좋아요 {post.likes}</Text>

@@ -1,25 +1,76 @@
 import React, { useState } from 'react';
-import { SafeAreaView, View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { SafeAreaView, View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Image, Alert } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function ItemRegisterScreen({ navigation }) {
     const [name, setName] = useState('');
     const [category, setCategory] = useState('');
-    const [status, setStatus] = useState('예약');
     const [method, setMethod] = useState('무료나눔');
     const [price, setPrice] = useState('');
     const [description, setDescription] = useState('');
+    const [image, setImage] = useState(null);
 
-    const handleSave = () => {
-        console.log({
-            name,
-            category,
-            status,
-            method,
-            price,
-            description,
+    const pickImage = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
         });
-        navigation.goBack();
+
+        if (!result.canceled) {
+            setImage(result.assets[0]);
+        }
+    };
+
+    const handleSave = async () => {
+        const formData = new FormData();
+        formData.append("memberId", "1");
+        formData.append("title", name);
+        formData.append("price", price ? parseInt(price, 10).toString() : "0");
+        formData.append("goodsCategory", category === '의류' ? 'CLOTHING' :
+            category === '장난감' ? 'TOYS' :
+                category === '교육' ? 'EDUCATION' :
+                    category === '생활용품' ? 'SUPPLIES' : 'OTHER');
+        formData.append("saleType", method === '무료나눔' ? 'FREE' : 'SALE');
+        formData.append("description", description);
+
+        if (image) {
+            const fileName = image.uri.split('/').pop();
+            const fileType = image.uri.split('.').pop();
+
+            formData.append("file", {
+                name: fileName,
+                type: `image/${fileType}`,
+                uri: image.uri,
+            });
+        }
+
+        try {
+            const response = await fetch('http://52.79.128.176:8080/api/v1/goods', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+                body: formData,
+            });
+
+            console.log('HTTP Status Code:', response.status);
+
+            const responseData = await response.json();
+
+            console.log('Response Data:', responseData);
+
+            if (response.ok && responseData.httpStatusCode === 200) {
+                console.log('요청에 성공하였습니다:', responseData.message);
+                navigation.goBack();
+            } else {
+                console.error('요청 실패:', responseData.message);
+            }
+        } catch (error) {
+            console.error('데이터 전송 오류:', error);
+        }
     };
 
     return (
@@ -32,9 +83,13 @@ export default function ItemRegisterScreen({ navigation }) {
                     <Text style={styles.headerTitle}>게시글 등록하기</Text>
                 </View>
                 <View style={styles.imageContainer}>
-                    <View style={styles.itemImagePlaceholder} />
-                    <View style={styles.itemImagePlaceholder} />
-                    <View style={styles.itemImagePlaceholder} />
+                    <TouchableOpacity onPress={pickImage} style={styles.imagePicker}>
+                        {image ? (
+                            <Image source={{ uri: image.uri }} style={styles.itemImage} />
+                        ) : (
+                            <Ionicons name="camera" size={40} color="#888" />
+                        )}
+                    </TouchableOpacity>
                 </View>
                 <TextInput
                     style={styles.input}
@@ -51,18 +106,6 @@ export default function ItemRegisterScreen({ navigation }) {
                             onPress={() => setCategory(cat)}
                         >
                             <Text style={[styles.buttonText, category === cat && styles.selectedButtonText]}>{cat}</Text>
-                        </TouchableOpacity>
-                    ))}
-                </View>
-                <Text style={styles.label}>거래 상태</Text>
-                <View style={styles.buttonGroup}>
-                    {['예약', '판매중', '판매완료'].map((stat) => (
-                        <TouchableOpacity
-                            key={stat}
-                            style={[styles.categoryButton, status === stat && styles.selectedButton]}
-                            onPress={() => setStatus(stat)}
-                        >
-                            <Text style={[styles.buttonText, status === stat && styles.selectedButtonText]}>{stat}</Text>
                         </TouchableOpacity>
                     ))}
                 </View>
@@ -121,20 +164,27 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         flex: 1,
-        textAlign: 'left', // 왼쪽 정렬
+        textAlign: 'left',
         marginLeft: 10,
     },
     imageContainer: {
         flexDirection: 'row',
-        justifyContent: 'space-around',
+        justifyContent: 'center',
         marginVertical: 16,
         paddingHorizontal: 16,
     },
-    itemImagePlaceholder: {
+    imagePicker: {
         width: 100,
         height: 100,
         borderRadius: 10,
         backgroundColor: '#D3D3D3',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    itemImage: {
+        width: '100%',
+        height: '100%',
+        borderRadius: 10,
     },
     input: {
         borderWidth: 1,

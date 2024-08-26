@@ -1,23 +1,44 @@
-import React, { useState } from 'react';
-import { SafeAreaView, View, Text, FlatList, TouchableOpacity, StyleSheet, Modal } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { SafeAreaView, View, Text, FlatList, TouchableOpacity, StyleSheet, Modal, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-const categories = ['전체', '의류', '장난감', '교육', '생활용품', '휴가'];
-
-const initialItems = [
-    { id: '1', category: '장난감', name: '아기 쿠션', price: '50,000원', location: '부산 대연1동', date: '3일 전' },
-    { id: '2', category: '장난감', name: '물놀이 장난감', price: '무료나눔', location: '부산 대연1동', date: '3일 전' },
-    { id: '3', category: '의류', name: '아기 정장', price: '8,000원', location: '부산 대연1동', date: '3일 전' },
-    { id: '4', category: '장난감', name: '유아용 장난감', price: '10,000원', location: '부산 대연1동', date: '3일 전' },
+const categories = [
+    { label: '전체', value: 'ALL' },
+    { label: '의류', value: 'CLOTHES' },
+    { label: '음식', value: 'FOODS' },
+    { label: '생활용품', value: 'DAILY_ITEM' },
+    { label: '장난감', value: 'TOY' },
 ];
 
 export default function ItemListScreen({ navigation }) {
-    const [selectedCategory, setSelectedCategory] = useState('전체');
+    const [selectedCategory, setSelectedCategory] = useState('ALL');
     const [modalVisible, setModalVisible] = useState(false);
+    const [items, setItems] = useState([]);
 
-    const filteredItems = selectedCategory === '전체'
-        ? initialItems
-        : initialItems.filter(item => item.category === selectedCategory);
+    useEffect(() => {
+        const fetchItems = async () => {
+            let url = 'http://52.79.128.176:8080/api/v1/goods';
+            if (selectedCategory !== 'ALL') {
+                url += `?category=${selectedCategory}`;
+            }
+
+            try {
+                const response = await fetch(url);
+                const result = await response.json();
+
+                if (result.httpStatusCode === 200 && result.code === '1000') {
+                    const fetchedItems = result.data.content;
+                    setItems(fetchedItems);
+                } else {
+                    console.error('Failed to fetch items:', result.message);
+                }
+            } catch (error) {
+                console.error('Failed to fetch items:', error);
+            }
+        };
+
+        fetchItems();
+    }, [selectedCategory]);
 
     const handleFloatingButtonPress = () => {
         setModalVisible(true);
@@ -39,35 +60,39 @@ export default function ItemListScreen({ navigation }) {
             <View style={styles.categoryContainer}>
                 {categories.map(category => (
                     <TouchableOpacity
-                        key={category}
+                        key={category.value}
                         style={[
                             styles.categoryButton,
-                            selectedCategory === category && styles.selectedCategoryButton
+                            selectedCategory === category.value && styles.selectedCategoryButton
                         ]}
-                        onPress={() => setSelectedCategory(category)}
+                        onPress={() => setSelectedCategory(category.value)}
                     >
                         <Text
                             style={[
                                 styles.categoryText,
-                                selectedCategory === category && styles.selectedCategoryText
+                                selectedCategory === category.value && styles.selectedCategoryText
                             ]}
                         >
-                            {category}
+                            {category.label}
                         </Text>
                     </TouchableOpacity>
                 ))}
             </View>
             <FlatList
-                data={filteredItems}
-                keyExtractor={item => item.id}
+                data={items}
+                keyExtractor={item => item.boardId.toString()}
                 renderItem={({ item }) => (
                     <TouchableOpacity onPress={() => navigation.navigate('ItemDetailScreen', { item })}>
                         <View style={styles.itemContainer}>
-                            <View style={styles.itemImagePlaceholder} />
+                            <Image
+                                source={{ uri: item.thumbnailUrl }}
+                                style={styles.itemImage}
+                                resizeMode="cover"
+                            />
                             <View style={styles.itemDetails}>
-                                <Text style={styles.itemName}>{item.name}</Text>
+                                <Text style={styles.itemName}>{item.title}</Text>
                                 <Text style={styles.itemPrice}>{item.price}</Text>
-                                <Text style={styles.itemInfo}>{item.location} - {item.date}</Text>
+                                <Text style={styles.itemInfo}>{item.address ? item.address : '위치 정보 없음'} - {item.daysAgo}</Text>
                             </View>
                         </View>
                     </TouchableOpacity>
@@ -149,7 +174,7 @@ const styles = StyleSheet.create({
         borderBottomColor: '#EEE',
         backgroundColor: '#FFFFFF',
     },
-    itemImagePlaceholder: {
+    itemImage: {
         width: 60,
         height: 60,
         marginRight: 16,
