@@ -1,9 +1,9 @@
 import 'react-native-gesture-handler';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Home from './component/Home';
+import SplashScreen from './component/SplashScreen';
 import MatchingBoard from './component/MatchingBoard';
 import Board from './component/Board';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -29,6 +29,8 @@ import InfoPostRegisterScreen from './screens/InfoBoard/InfoRegister'
 import QuestionRegister from './screens/QuestionBoard/QuestionRegister'
 import ChatListScreen from './screens/chat/ChatListScreen';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import Profile from './component/Board/Profile';
+import Home from './component/Home/Home';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -36,53 +38,16 @@ const HomeStack = createStackNavigator<RootStackParamList>();
 function BoardStack() {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Board" component={Board} options={{ headerShown: false }} />
+      <HomeStack.Screen name="BoardHome" component={HomeScreen} options={{ headerShown: false }} />
+
       <Stack.Screen name="MatchingBoard" component={MatchingBoard} options={{ headerShown: false }} />
-      <Stack.Screen name="MatchingBoardDetail" component={MatchingBoardDetail} options={{ headerShown: false }}/>
-      <Stack.Screen name="CreateMatchingBoard" component={CreateMatchingBoard} options={{ headerShown: false }}/>
-      <Stack.Screen name="LocationAssistant" component={LocationAssistant} options={{ headerShown: false }}/>
+      <Stack.Screen name="MatchingBoardDetail" component={MatchingBoardDetail} options={{ headerShown: false }} />
+      <Stack.Screen name="CreateMatchingBoard" component={CreateMatchingBoard} options={{ headerShown: false }} />
+      <Stack.Screen name="LocationAssistant" component={LocationAssistant} options={{ headerShown: false }} />
     </Stack.Navigator>
   );
 }
 
-// 탭 네비게이션 컴포넌트
-function TabNavigator({ navigation }: any) {
-  return (
-    <Tab.Navigator
-      screenOptions={({ route }) => ({
-        tabBarIcon: ({ color, size }) => {
-          let iconName: string;
-          if (route.name === 'Home') {
-            iconName = 'home';
-          }
-          else if (route.name === 'Chat') {
-            iconName = 'wechat';
-          }
-          else if (route.name === 'Board') {
-            iconName = 'forum';
-          }
-          else if (route.name === 'MyPage') {
-            iconName = 'person';
-          }
-          return <Icon name={iconName} size={size} color={color} />;
-
-        },
-      })}
-    >
-      <Tab.Screen name="Home" component={Home} />
-      <Tab.Screen name="Chat" component={Home} />
-      <Tab.Screen name="Board" component={BoardStack} options={{ headerShown: false }} />
-      <Tab.Screen name="MyPage" component={Home} />
-    </Tab.Navigator>
-  );
-}
-function StackNavigator() {
-  return (
-    <Stack.Navigator initialRouteName='TabNavigator'>
-      <Stack.Screen name="TabNavigator" component={TabNavigator} options={{ headerShown: false }} />
-    </Stack.Navigator>
-  );
-}
 export type RootStackParamList = {
   Home: undefined;
   ItemListScreen: undefined;
@@ -105,7 +70,7 @@ export type RootStackParamList = {
 function HomeStackScreen() {
   return (
     <HomeStack.Navigator>
-      <HomeStack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="Home" component={Home} options={{ headerShown: false }} />
       <HomeStack.Screen name="ItemListScreen" component={ItemListScreen} options={{ headerShown: false }} />
       <HomeStack.Screen name="SearchScreen" component={SearchScreen} options={{ headerShown: false }} />
       <HomeStack.Screen name="ItemDetailScreen" component={ItemDetailScreen} options={{ headerShown: false }} />
@@ -122,14 +87,30 @@ function HomeStackScreen() {
       <HomeStack.Screen name="QuestionRegister" component={QuestionRegister} options={{ headerShown: false }} />
       <Stack.Screen name="Board" component={Board} options={{ headerShown: false }} />
       <Stack.Screen name="MatchingBoard" component={MatchingBoard} options={{ headerShown: false }} />
-      <Stack.Screen name="MatchingBoardDetail" component={MatchingBoardDetail} options={{ headerShown: false }}/>
-      <Stack.Screen name="CreateMatchingBoard" component={CreateMatchingBoard} options={{ headerShown: false }}/>
-      <Stack.Screen name="LocationAssistant" component={LocationAssistant} options={{ headerShown: false }}/>
+      <Stack.Screen name="MatchingBoardDetail" component={MatchingBoardDetail} options={{ headerShown: false }} />
+      <Stack.Screen name="CreateMatchingBoard" component={CreateMatchingBoard} options={{ headerShown: false }} />
+      <Stack.Screen name="LocationAssistant" component={LocationAssistant} options={{ headerShown: false }} />
+      <Stack.Screen name="ProfileDetail" component={Profile} options={{ headerShown: false }} />
+
+
     </HomeStack.Navigator>
   );
 }
 
 export default function App() {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setIsLoading(false);
+    }, 1800); // 2초 후에 로딩 종료
+
+    return () => clearTimeout(timeout);
+  }, []);
+
+  if (isLoading) {
+    return <SplashScreen />;
+  }
   return (
     <NavigationContainer>
       <Tab.Navigator
@@ -161,7 +142,7 @@ export default function App() {
       >
         <Tab.Screen name="Home" component={HomeStackScreen} />
         <Tab.Screen name="Chat" component={ChatListScreen} />
-        <Tab.Screen name="Board" component={HomeStackScreen} />
+        <Tab.Screen name="Board" component={BoardStack} />
         <Tab.Screen name="MyPage" component={DumpScreen} />
       </Tab.Navigator>
     </NavigationContainer>

@@ -12,6 +12,9 @@ interface BoardListProps {
     likes: number;
     comments: number;
     id: number;
+    address:string;
+    latitude:number;
+    longitude:number;
   }[];
 }
 
@@ -31,6 +34,9 @@ const BoardList: React.FC<BoardListProps> = ({ items }) => {
           id={item.id}
           likes={item.likes}
           comments={item.comments}
+          address={item.address}
+          latitude={item.latitude}
+          longitude={item.longitude}
         />
       )}
       keyExtractor={item => item.id.toString()}

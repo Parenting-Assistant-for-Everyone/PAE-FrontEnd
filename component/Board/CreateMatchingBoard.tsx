@@ -43,7 +43,7 @@ function CreateMatchingBoard() {
     };
 
     try {
-      const response = await fetch('http://192.168.0.7:8080/board/create', {
+      const response = await fetch('http://172.30.1.64/board/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -11,6 +11,9 @@ interface BoardItemProps {
   likes: number;
   comments: number;
   id: number;
+  address:string;
+  latitude:number;
+  longitude:number;
   onPress: () => void; // onPress prop 추가
 }
 
