@@ -52,35 +52,35 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#FFFFFF',
-        padding: 16,
+        padding: '4%',
     },
     searchBar: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 20,
+        marginBottom: '5%',
         borderBottomWidth: 1,
         borderBottomColor: '#EEE',
     },
     searchInput: {
         flex: 1,
-        fontSize: 16,
-        paddingVertical: 8,
+        fontSize: '16%',
+        paddingVertical: '2%',
     },
     searchTitle: {
-        fontSize: 18,
+        fontSize: '16%',
         fontWeight: 'bold',
         color: '#FF8C00',
-        marginBottom: 10,
+        marginBottom: '2.5%',
     },
     searchItem: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        paddingVertical: 10,
+        paddingVertical: '2.5%',
         borderBottomWidth: 1,
         borderBottomColor: '#EEE',
     },
     searchText: {
-        fontSize: 16,
+        fontSize: '4%',
         color: '#000',
     },
 });

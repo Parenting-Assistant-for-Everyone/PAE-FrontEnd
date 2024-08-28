@@ -90,34 +90,35 @@ export default function ChatListScreen() {
 
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: '#FFFFFF' },
-    header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16 },
-    title: { fontSize: 20, fontWeight: 'bold' },
+    header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: '4%' },
+    title: { fontSize: '20%', fontWeight: 'bold' },
     headerIcons: { flexDirection: 'row' },
-    icon: { marginLeft: 16 },
-    tabContainer: { flexDirection: 'row', justifyContent: 'flex-start', marginVertical: 10, paddingLeft: 16 },
+    icon: { marginLeft: '4%' },
+    tabContainer: { flexDirection: 'row', justifyContent: 'flex-start', marginVertical: '2%', paddingLeft: '4%' },
     tabButton: {
-        paddingVertical: 8,
-        paddingHorizontal: 15,
+        paddingVertical: '2%',
+        paddingHorizontal: '4%',
         borderWidth: 1,
         borderColor: '#FFEB3B',
         borderRadius: 20,
-        marginRight: 10
+        marginRight: '2.5%',
     },
     activeTabButton: {
-        backgroundColor: '#FFEB3B'
+        backgroundColor: '#FFEB3B',
     },
     tabButtonText: {
-        fontSize: 16,
+        fontSize: '15%',
         color: '#000',
-        fontWeight: 'bold'
+        fontWeight: 'bold',
     },
     activeTabButtonText: {
-        color: '#000'
+        color: '#000',
     },
-    chatItemContainer: { flexDirection: 'row', alignItems: 'center', padding: 16, borderBottomWidth: 1, borderBottomColor: '#EEE' },
-    avatar: { width: 50, height: 50, borderRadius: 25, marginRight: 16 },
+    chatItemContainer: { flexDirection: 'row', alignItems: 'center', padding: '4%', borderBottomWidth: 1, borderBottomColor: '#EEE' },
+    avatar: { width: '13%', height: undefined, aspectRatio: 1, borderRadius: 25, marginRight: '4%' },
     chatDetails: { flex: 1 },
-    chatName: { fontSize: 16, fontWeight: 'bold' },
-    chatMessage: { fontSize: 14, color: '#888' },
-    chatTime: { fontSize: 12, color: '#888' },
+    chatName: { fontSize: '15%', fontWeight: 'bold' },
+    chatMessage: { fontSize: '12%', color: '#888' },
+    chatTime: { fontSize: '12%', color: '#888' },
 });
+

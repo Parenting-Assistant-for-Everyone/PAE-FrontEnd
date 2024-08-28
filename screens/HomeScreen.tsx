@@ -88,21 +88,22 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#FFFFFF',
+        paddingHorizontal: '10%',
     },
     title: {
-        fontSize: 24,
+        fontSize: 3.5 %,
         fontWeight: 'bold',
-        marginBottom: 40,
+        marginBottom: '10%',
     },
     button: {
         width: '80%',
-        padding: 15,
-        borderRadius: 40,
+        padding: 3.5 %,
+        borderRadius: 20,
         alignItems: 'center',
-        marginVertical: 10,
+        marginVertical: '2.5%',
     },
     buttonText: {
-        fontSize: 18,
+        fontSize: 2.2 %,
         color: '#000',
     },
 });

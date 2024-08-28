@@ -33,8 +33,7 @@ export default function ChatDetailScreen({ route, navigation }) {
             { text: '취소', style: 'cancel' },
             {
                 text: '삭제', onPress: () => {
-                    // 여기서 DB 삭제 로직을 추가합니다.
-                    navigation.goBack(); // 채팅 목록 화면으로 이동
+                    navigation.goBack();
                 }
             },
         ]);
@@ -45,8 +44,7 @@ export default function ChatDetailScreen({ route, navigation }) {
             { text: '취소', style: 'cancel' },
             {
                 text: '차단', onPress: () => {
-                    // 여기서 DB 차단 로직을 추가합니다.
-                    navigation.goBack(); // 채팅 목록 화면으로 이동
+                    navigation.goBack();
                 }
             },
         ]);
@@ -92,7 +90,6 @@ export default function ChatDetailScreen({ route, navigation }) {
                 </TouchableOpacity>
             </View>
 
-            {/* 삭제/차단 모달 */}
             <Modal
                 animationType="slide"
                 transparent={true}
@@ -119,22 +116,22 @@ export default function ChatDetailScreen({ route, navigation }) {
 
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: '#FFFFFF' },
-    header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16, borderBottomWidth: 1, borderBottomColor: '#EEE' },
+    header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: '4%', borderBottomWidth: 1, borderBottomColor: '#EEE' },
     headerLeft: { flexDirection: 'row', alignItems: 'center' },
-    headerTitleContainer: { marginLeft: 8 },
-    headerTitle: { fontSize: 18, fontWeight: 'bold' },
-    headerSubtitle: { fontSize: 12, color: '#888' },
-    messageList: { paddingHorizontal: 16, paddingVertical: 8 },
-    messageContainer: { padding: 10, borderRadius: 10, marginBottom: 10, maxWidth: '75%' },
+    headerTitleContainer: { marginLeft: '2%' },
+    headerTitle: { fontSize: '15%', fontWeight: 'bold' },
+    headerSubtitle: { fontSize: '13%', color: '#888' },
+    messageList: { paddingHorizontal: '6%', paddingVertical: '2%' },
+    messageContainer: { padding: '2.5%', borderRadius: 10, marginBottom: '2%', maxWidth: '75%' },
     myMessage: { alignSelf: 'flex-end', backgroundColor: '#FFEB3B' },
     otherMessage: { alignSelf: 'flex-start', backgroundColor: '#F1F1F1' },
-    messageText: { fontSize: 16 },
-    inputContainer: { flexDirection: 'row', alignItems: 'center', padding: 16, borderTopWidth: 1, borderTopColor: '#EEE' },
-    input: { flex: 1, borderWidth: 1, borderColor: '#CCC', borderRadius: 8, paddingHorizontal: 12, paddingVertical: 8, marginRight: 10 },
+    messageText: { fontSize: '15%' },
+    inputContainer: { flexDirection: 'row', alignItems: 'center', padding: '4%', borderTopWidth: 1, borderTopColor: '#EEE' },
+    input: { flex: 1, borderWidth: 1, borderColor: '#CCC', borderRadius: 8, paddingHorizontal: '3%', paddingVertical: '2%', marginRight: '2.5%' },
     modalOverlay: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0, 0, 0, 0.5)' },
-    modalContent: { backgroundColor: 'white', padding: 16, borderTopLeftRadius: 10, borderTopRightRadius: 10 },
-    modalButton: { paddingVertical: 15, alignItems: 'center', borderBottomWidth: 1, borderBottomColor: '#EEE' },
-    modalButtonText: { fontSize: 18, color: 'red' },
-    modalCancelButton: { paddingVertical: 15, alignItems: 'center' },
-    modalCancelButtonText: { fontSize: 18, color: '#888' },
+    modalContent: { backgroundColor: 'white', padding: '4%', borderTopLeftRadius: 10, borderTopRightRadius: 10 },
+    modalButton: { paddingVertical: '4%', alignItems: 'center', borderBottomWidth: 1, borderBottomColor: '#EEE' },
+    modalButtonText: { fontSize: '15%', color: 'red' },
+    modalCancelButton: { paddingVertical: '8%', alignItems: 'center' },
+    modalCancelButtonText: { fontSize: '15%', color: '#888' },
 });

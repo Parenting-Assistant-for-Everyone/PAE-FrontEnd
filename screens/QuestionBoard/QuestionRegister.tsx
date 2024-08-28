@@ -78,37 +78,37 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        padding: 16,
+        padding: '4%',
     },
     headerTitle: {
-        fontSize: 18,
+        fontSize: '18%',
         fontWeight: 'bold',
     },
     doneButton: {
         backgroundColor: '#FFEB3B',
-        paddingHorizontal: 16,
-        paddingVertical: 8,
-        borderRadius: 20,
+        paddingHorizontal: '4%',
+        paddingVertical: '2%',
+        borderRadius: '10%',
     },
     doneButtonText: {
-        fontSize: 16,
+        fontSize: '15%',
         fontWeight: 'bold',
         color: '#000',
     },
     inputContainer: {
-        paddingHorizontal: 16,
-        paddingTop: 20,
+        paddingHorizontal: '4%',
+        paddingTop: '5%',
     },
     titleInput: {
-        fontSize: 20,
+        fontSize: '20%',
         fontWeight: '500',
-        marginBottom: 16,
+        marginBottom: '4%',
         borderBottomWidth: 1,
         borderBottomColor: '#EEE',
         color: '#000',
     },
     contentInput: {
-        fontSize: 18,
+        fontSize: '17%',
         color: '#000',
         height: '60%',
         textAlignVertical: 'top',
@@ -116,10 +116,11 @@ const styles = StyleSheet.create({
     footer: {
         alignItems: 'center',
         marginTop: 'auto',
-        paddingBottom: 30,
+        paddingBottom: '7.5%',
     },
     footerText: {
-        fontSize: 16,
+        fontSize: '13%',
         color: '#C7C7CD',
     },
 });
+

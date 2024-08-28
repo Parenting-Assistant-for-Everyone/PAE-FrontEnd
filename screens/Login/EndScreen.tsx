@@ -14,11 +14,9 @@ import {
 export default function EndScreen({ navigation }) {
     const [inputText, setInputText] = useState('');
 
-    // EndScreen.js 또는 EndScreen.tsx
     const handleSkip = () => {
-        // 메인 앱 네비게이터의 Home 탭으로 이동
         navigation.navigate('MainApp', {
-            screen: 'Home', // Home 스택 네비게이터로 이동
+            screen: 'Home',
         });
     };
 
@@ -94,47 +92,47 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#FFFFFF',
-        padding: 20,
+        padding: '5%',
         justifyContent: 'center',
     },
     title: {
-        fontSize: 20,
+        fontSize: '18%',
         fontWeight: 'bold',
-        marginBottom: 20,
+        marginBottom: '5%',
         textAlign: 'center',
     },
     textInput: {
         backgroundColor: '#F5F5DC',
-        borderRadius: 10,
-        padding: 15,
-        height: 150,
+        borderRadius: '2.5%',
+        padding: '3.75%',
+        height: '37.5%',
         textAlignVertical: 'top',
-        fontSize: 16,
-        marginBottom: 20,
+        fontSize: '15%',
+        marginBottom: '5%',
     },
     warningText: {
-        fontSize: 12,
+        fontSize: '13%',
         color: '#FF0000',
-        marginBottom: 20,
+        marginBottom: '5%',
         textAlign: 'center',
     },
     skipButton: {
         alignItems: 'center',
-        marginBottom: 10,
+        marginBottom: '2.5%',
     },
     skipButtonText: {
-        fontSize: 16,
+        fontSize: '13%',
         color: '#888',
     },
     submitButton: {
         backgroundColor: '#FFEB3B',
-        paddingVertical: 15,
-        paddingHorizontal: 40,
-        borderRadius: 30,
+        paddingVertical: '3.75%',
+        paddingHorizontal: '10%',
+        borderRadius: '7.5%',
         alignItems: 'center',
     },
     submitButtonText: {
-        fontSize: 16,
+        fontSize: '15%',
         fontWeight: 'bold',
         color: '#000',
     },
