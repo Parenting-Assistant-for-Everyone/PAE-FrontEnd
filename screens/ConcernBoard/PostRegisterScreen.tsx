@@ -6,10 +6,32 @@ export default function PostRegisterScreen({ navigation }) {
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
 
-    const handlePost = () => {
-        console.log('Title:', title);
-        console.log('Content:', content);
-        navigation.goBack();
+    const handlePost = async () => {
+        // Post data object
+        const postData = {
+            title: title,
+            content: content,
+        };
+
+        try {
+            // API 호출하여 데이터 전송
+            const response = await fetch('https://your-api.com/posts', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(postData),
+            });
+
+            if (response.ok) {
+                console.log('Post created successfully');
+                navigation.goBack();  // 성공 시 이전 화면으로 돌아감
+            } else {
+                console.error('Failed to create post');
+            }
+        } catch (error) {
+            console.error('Error posting data:', error);
+        }
     };
 
     return (

@@ -23,7 +23,7 @@ function MatchingBoard() {
 
   const fetchData = async (keyword = '') => {
     try {
-      let url = `http://192.168.0.81:8080/board/matchingBoardList?address=${finalAddressName}&page=1&type=${selected}&keyword=${keyword}`;
+      let url = `http://172.30.1.64:8080/board/matchingBoardList?address=${finalAddressName}&page=1&type=${selected}&keyword=${keyword}`;
       console.log('주소는?',finalAddressName);
       const response = await axios.get(url, {
         headers: { 'Content-Type': 'application/json' },

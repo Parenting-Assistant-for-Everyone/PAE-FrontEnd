@@ -7,31 +7,80 @@ export default function ItemEditScreen({ route, navigation }) {
 
     const [name, setName] = useState(item.name);
     const [category, setCategory] = useState(item.category);
-    const [status, setStatus] = useState('예약'); // 초기값 예시
-    const [method, setMethod] = useState('무료나눔'); // 초기값 예시
+    const [status, setStatus] = useState(item.status);
+    const [method, setMethod] = useState(item.method);
     const [price, setPrice] = useState(item.price);
     const [description, setDescription] = useState(item.description);
+    const [deleteImageIdList, setDeleteImageIdList] = useState([]);
 
-    const handleSave = () => {
-        // 저장 로직을 여기에 추가, 이후 DB에 저장할 수 있도록
-        console.log({
-            name,
-            category,
-            status,
-            method,
-            price,
-            description,
-        });
-        navigation.goBack();
+    const handleSave = async () => {
+        const updatedData = {
+            memberId: 1,
+            title: name,
+            goodsCategory: category === '의류' ? 'CLOTHES' :
+                category === '장난감' ? 'TOYS' :
+                    category === '교육' ? 'EDUCATION' :
+                        category === '생활용품' ? 'SUPPLIES' : 'OTHER',
+            saleType: method === '무료나눔' ? 'SHARING' : 'SALE',
+            saleStatus: status === '예약' ? 'RESERVED' : status === '판매중' ? 'ON_SALE' : 'DONE',
+            price: parseInt(price, 10),
+            description: description,
+            deleteImageIdList: deleteImageIdList,
+        };
+
+        try {
+            const response = await fetch(`http://52.79.128.176:8080/api/v1/goods/${item.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(updatedData),
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.httpStatusCode === 200) {
+                console.log('Item updated successfully:', result.message);
+                navigation.goBack();
+            } else {
+                console.error('Failed to update item:', result.message);
+            }
+        } catch (error) {
+            console.error('Error updating item:', error);
+        }
     };
 
-    const handleDelete = () => {
+    const handleDelete = async () => {
         Alert.alert(
             "삭제 확인",
             "이 게시글을 삭제하시겠습니까?",
             [
                 { text: "취소", style: "cancel" },
-                { text: "삭제", style: "destructive", onPress: () => navigation.goBack() } // 삭제 로직 추가 필요
+                {
+                    text: "삭제",
+                    style: "destructive",
+                    onPress: async () => {
+                        try {
+                            const response = await fetch(`http://52.79.128.176:8080/api/v1/goods/${item.id}`, {
+                                method: 'DELETE',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                            });
+
+                            const result = await response.json();
+
+                            if (response.ok && result.httpStatusCode === 200) {
+                                console.log('Item deleted successfully:', result.message);
+                                navigation.goBack();
+                            } else {
+                                console.error('Failed to delete item:', result.message);
+                            }
+                        } catch (error) {
+                            console.error('Error deleting item:', error);
+                        }
+                    }
+                }
             ]
         );
     };
@@ -49,6 +98,7 @@ export default function ItemEditScreen({ route, navigation }) {
                     </TouchableOpacity>
                 </View>
                 <View style={styles.imageContainer}>
+                    {/* 이미지 플레이스홀더는 실제 구현에서는 이미지 추가/삭제 기능을 제공할 수 있음 */}
                     <View style={styles.itemImagePlaceholder} />
                     <View style={styles.itemImagePlaceholder} />
                     <View style={styles.itemImagePlaceholder} />
@@ -111,7 +161,7 @@ export default function ItemEditScreen({ route, navigation }) {
                     numberOfLines={4}
                 />
                 <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-                    <Text style={styles.saveButtonText}>등록하기</Text>
+                    <Text style={styles.saveButtonText}>수정하기</Text>
                 </TouchableOpacity>
             </ScrollView>
         </SafeAreaView>

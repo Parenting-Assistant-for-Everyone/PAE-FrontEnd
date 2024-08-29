@@ -2,16 +2,19 @@ import React from 'react';
 import { View, Text, Button, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useNavigation } from '@react-navigation/native';
 
 const Home: React.FC = () => {
+  const navigation = useNavigation();
+
   return (
     <View style={styles.container}>
       <View style={styles.logoContainer}>
-        <Ionicons name="heart-circle-outline" size={150} color="black" />
+        <Ionicons name="heart-circle-outline" size={150} color="black"/>
         <Text style={styles.slogan}>모두의 육아 도우미</Text>
       </View>
 
-      <TouchableOpacity style={styles.signUpButton}>
+      <TouchableOpacity style={styles.signUpButton} onPress={() => navigation.navigate('SignupForm')}>
         <Text style={styles.buttonText}>회원가입</Text>
       </TouchableOpacity>
 
