@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
-import { SafeAreaView, View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Image, Alert } from 'react-native';
+import { SafeAreaView, View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Image, Alert, Platform } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
 
-export default function ItemRegisterScreen({ navigation }) {
+export default function ItemRegisterScreen({ navigation }: any) {
     const [name, setName] = useState('');
     const [category, setCategory] = useState('');
     const [method, setMethod] = useState('무료나눔');
     const [price, setPrice] = useState('');
     const [description, setDescription] = useState('');
-    const [image, setImage] = useState(null);
+    const [image, setImage] = useState<ImagePicker.ImagePickerAsset | null>(null);
 
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
@@ -18,61 +18,67 @@ export default function ItemRegisterScreen({ navigation }) {
             aspect: [4, 3],
             quality: 1,
         });
+        console.log('result', result);
 
         if (!result.canceled) {
             setImage(result.assets[0]);
         }
+        console.log(image);
     };
 
     const handleSave = async () => {
-        const formData = new FormData();
-        formData.append("memberId", "1");
-        formData.append("title", name);
-        formData.append("price", price ? parseInt(price, 10).toString() : "0");
-        formData.append("goodsCategory", category === '의류' ? 'CLOTHING' :
-            category === '장난감' ? 'TOYS' :
-                category === '교육' ? 'EDUCATION' :
-                    category === '생활용품' ? 'SUPPLIES' : 'OTHER');
-        formData.append("saleType", method === '무료나눔' ? 'FREE' : 'SALE');
-        formData.append("description", description);
-
+        if (!name || !category || (method === '판매' && !price)) {
+            Alert.alert('모든 필드를 입력해주세요');
+            return;
+        }
+    
+        let formData = new FormData();
+    
+        const registDto = {
+            memberId: "1",
+            title: name,
+            price: price ? parseInt(price, 10).toString() : "0",
+            goodsCategory: category === '의류' ? 'CLOTHES' :
+                category === '장난감' ? 'TOY' :
+                    category === '음식' ? 'FOODS' :
+                        category === '생활용품' ? 'DAILY_ITEM' : 'OTHER',
+            saleType: method === '무료나눔' ? 'SHARING' : 'SALE',
+            description: description,
+        };
+    
+        // JSON 데이터를 단순히 문자열로 추가
+        formData.append('registDto', JSON.stringify(registDto));
+    
         if (image) {
-            const fileName = image.uri.split('/').pop();
-            const fileType = image.uri.split('.').pop();
-
-            formData.append("file", {
-                name: fileName,
-                type: `image/${fileType}`,
+            formData.append('images', {
                 uri: image.uri,
+                type: 'image/jpeg', // 이미지 파일의 MIME 타입 지정
+                name: image.uri.split('/').pop(), // 파일명 추출
             });
         }
-
+    
         try {
             const response = await fetch('http://52.79.128.176:8080/api/v1/goods', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-                body: formData,
+                body: formData,  // Content-Type을 설정하지 마세요. 자동으로 설정됩니다.
             });
-
-            console.log('HTTP Status Code:', response.status);
-
-            const responseData = await response.json();
-
-            console.log('Response Data:', responseData);
-
-            if (response.ok && responseData.httpStatusCode === 200) {
-                console.log('요청에 성공하였습니다:', responseData.message);
-                navigation.goBack();
+    
+            const result = await response.json();
+            if (response.ok) {
+                Alert.alert('등록 성공', '게시글이 성공적으로 등록되었습니다.', [
+                    { text: '확인', onPress: () => navigation.goBack() },
+                ]);
             } else {
-                console.error('요청 실패:', responseData.message);
+                Alert.alert('등록 실패', result.message || '서버 오류가 발생했습니다.');
             }
         } catch (error) {
-            console.error('데이터 전송 오류:', error);
+            console.error('Error:', error);
+            Alert.alert('등록 실패', '서버와의 연결에 실패했습니다.');
         }
     };
-
+    
+    
+    
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -99,7 +105,7 @@ export default function ItemRegisterScreen({ navigation }) {
                 />
                 <Text style={styles.label}>카테고리</Text>
                 <View style={styles.buttonGroup}>
-                    {['의류', '장난감', '교육', '생활용품'].map((cat) => (
+                    {['의류', '장난감', '음식', '생활용품'].map((cat) => (
                         <TouchableOpacity
                             key={cat}
                             style={[styles.categoryButton, category === cat && styles.selectedButton]}

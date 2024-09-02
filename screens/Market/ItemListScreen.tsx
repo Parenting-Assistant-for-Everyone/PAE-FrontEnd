@@ -10,7 +10,7 @@ const categories = [
     { label: '장난감', value: 'TOY' },
 ];
 
-export default function ItemListScreen({ navigation }) {
+export default function ItemListScreen({ navigation }: any) {
     const [selectedCategory, setSelectedCategory] = useState('ALL');
     const [modalVisible, setModalVisible] = useState(false);
     const [items, setItems] = useState([]);
@@ -44,7 +44,7 @@ export default function ItemListScreen({ navigation }) {
         setModalVisible(true);
     };
 
-    const handleMenuPress = (screenName) => {
+    const handleMenuPress = (screenName: any) => {
         setModalVisible(false);
         navigation.navigate(screenName);
     };
